@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import SearchForm from './SearchForm';
 import { connect } from 'react-redux'
-import BlockMode from '../BlockMode';
-import ListMode from '../ListMode';
+
+import RepoBlockItem from '../RepoBlockItem';
 import ErrorResult from './ErrorResult';
 import ModeChanger from '../ModeChanger';
 
 class Search extends Component {
 
   render() {
-    let blockMode, listMode, errorPage, modeChanger;
-    if(!this.props.repList.length) {
+    let errorPage, modeChanger;
+    let classMode;
+    if(!this.props.list.length) {
       errorPage = <ErrorResult />;
       modeChanger = null;
     } else {
@@ -18,21 +19,17 @@ class Search extends Component {
       errorPage = null;
     }
     
-    if (this.props.modeDisplay === 'block') {
-      blockMode = <BlockMode list={this.props.repList}/>;
-      listMode = '';
-    } else {
-      listMode = <ListMode list={this.props.repList}/>;
-      blockMode = '';
-    }
-
     let loader ='';
     if(this.props.isFetching) {
       loader = <i className="fas fa-circle-notch fa-spin preloader"></i>;
     } else {
       loader = '';
     }       
-
+    if (this.props.modeDisplay === "list") {
+      classMode = 'repos-list';
+    } else if (this.props.modeDisplay === "block") {
+      classMode = 'repos-block';
+    } 
     return (
       <main className="main">
         <div className="top-block">
@@ -44,8 +41,11 @@ class Search extends Component {
         <section className="content">
           {loader}       
           {errorPage}
-          {blockMode}
-          {listMode}
+          <div className={classMode}>
+            {this.props.list.map((item, index) => 
+              <RepoBlockItem  key={index} item={item}/>
+            )}
+          </div>
         </section>
       </main>
     );
@@ -54,7 +54,8 @@ class Search extends Component {
 export default connect(
   state => ({
     isFetching: state.isFetching,
-    repList: state.repList,
+    list: state.repList,
+   
     modeDisplay: state.modeDisplay,
   }),
   dispatch => ({

@@ -22,7 +22,8 @@ class SearchForm extends Component {
 
   searchRequest() {
     this.props.onChangeFetching();
-    if(this.props.searchType && this.props.searchText && this.props.searchLang) {
+    if(this.props.searchType && this.props.searchText && this.props.searchLang && !this.props.isFetching) {
+      
       fetch(`https://api.github.com/search/${this.props.searchType}?q=${this.props.searchText}+language:${this.props.searchLang}&sort=stars&order=desc`)
         .then((response) => response.json())
         .then( (data) => {
@@ -39,11 +40,17 @@ class SearchForm extends Component {
               inMyList: false,
             })
           }
+          // проверка наличия репозиториев в моем листе
+          if (this.props.myList.length) {
+            dataResponse.forEach(element => {
+              this.props.myList.forEach(elem => {
+                if (element.id === elem.id) {
+                  element.inMyList = true;
+                }
+              });
+            });
+          }
           this.props.onSearchRequest(dataResponse);
-          this.props.onChangeType('');
-          this.props.onChangeLang('');
-          this.props.onChangeText('');
-          
         })
         .catch( alert );
       }
@@ -52,7 +59,6 @@ class SearchForm extends Component {
     
     return (
       <div className="search-block">
-       
         <SelectField
           floatingLabelText="Type"
           value={this.props.searchType}
@@ -98,6 +104,8 @@ export default connect(
     searchLang: state.searchLang,
     searchText: state.searchText,
     repList: state.repList,
+    myList: state.myList,
+    isFetching: state.isFetching,
   }),
   dispatch => ({
     onChangeFetching: () => {

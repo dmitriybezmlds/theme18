@@ -19,6 +19,7 @@ class App extends Component {
           <MuiThemeProvider>
             <div>
               <Header />
+              
               <Route exact path='/' component={Search}/>
               <Route path="/search" component={Search}/>
               <Route path="/mylist" component={MyList}/>

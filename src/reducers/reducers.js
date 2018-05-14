@@ -8,7 +8,7 @@ import {
   CHANGE_SEARCH_TYPE, 
   CHANGE_STATUS_IN_LIST,
   CHANGE_FETCHING,
-} from '../actions';
+} from '../actions/actions';
 
 const initialState = {
   repList: [
